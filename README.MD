@@ -3,7 +3,7 @@
 ## Introduction
 
 A repository I have created to keep track of my work for [Threejs Journey](https://threejs-journey.com/).
-This code relates to section 3 of chapter 1.
+This code relates chapter 1. Each commit represents a section of the chapter.
 
 This project is bootstrapped with Vite, vanilla JavaScript & TypeScript.
 
