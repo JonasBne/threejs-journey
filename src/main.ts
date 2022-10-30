@@ -1,6 +1,17 @@
 import './style.css'
 import * as THREE from 'three';
 
+// cursor movement controls
+const cursor = {
+    x: 0,
+    y: 0,
+}
+
+window.addEventListener('mousemove', (ev) => {
+    cursor.x = ev.clientX / window.innerWidth - 0.5;
+    cursor.y = -(ev.clientY / window.innerHeight - 0.5);
+})
+
 /*
 4 prerequisites to render a scene in the browser:
 - a Mesh, consists out of:
@@ -18,8 +29,8 @@ const material = new THREE.MeshBasicMaterial({ color: '#ff0000'});
 const mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
 
-const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
-camera.position.z = 4;
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.z = 3;
 // move the camera, otherwise everything is centered in the middle of the scene and nothing will be visible
 scene.add(camera);
 
@@ -28,15 +39,11 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
 
-const clock = new THREE.Clock();
-
 // animations
 const animate = () => {
-    // calculate how much time elapsed since the last frame was calculated
-    // to animate the object at the same speed, regardless of the framerate of
-    // the client device
-    camera.position.y = Math.sin(clock.getElapsedTime());
-    camera.position.x = Math.cos(clock.getElapsedTime());
+    camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 3;
+    camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3;
+    camera.position.y = cursor.y * 5;
     camera.lookAt(mesh.position)
 
     // render the scene
