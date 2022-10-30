@@ -1,5 +1,9 @@
 import './style.css'
 import * as THREE from 'three';
+import { OrbitControls} from "three/examples/jsm/controls/OrbitControls";
+
+// canvas
+const canvas = document.getElementsByClassName('webgl')[0] as HTMLCanvasElement;
 
 // cursor movement controls
 const cursor = {
@@ -34,17 +38,20 @@ camera.position.z = 3;
 // move the camera, otherwise everything is centered in the middle of the scene and nothing will be visible
 scene.add(camera);
 
+// controls
+const controls = new OrbitControls(camera, canvas);
+// add a smoothing factor
+controls.enableDamping = true;
+
 const renderer = new THREE.WebGLRenderer({
-    canvas: document.getElementsByClassName('webgl')[0]
+    canvas
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 // animations
 const animate = () => {
-    camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 3;
-    camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3;
-    camera.position.y = cursor.y * 5;
-    camera.lookAt(mesh.position)
+    // must be added if damping is required
+    controls.update();
 
     // render the scene
     renderer.render(scene, camera);
