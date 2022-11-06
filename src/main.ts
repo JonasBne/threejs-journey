@@ -5,17 +5,6 @@ import { OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 // canvas
 const canvas = document.getElementsByClassName('webgl')[0] as HTMLCanvasElement;
 
-// cursor movement controls
-const cursor = {
-    x: 0,
-    y: 0,
-}
-
-window.addEventListener('mousemove', (ev) => {
-    cursor.x = ev.clientX / window.innerWidth - 0.5;
-    cursor.y = -(ev.clientY / window.innerHeight - 0.5);
-})
-
 /*
 4 prerequisites to render a scene in the browser:
 - a Mesh, consists out of:
@@ -33,6 +22,33 @@ const material = new THREE.MeshBasicMaterial({ color: '#ff0000'});
 const mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
 
+const sizes = {
+    width: window.innerWidth,
+    height: window.innerHeight,
+}
+
+window.addEventListener('resize', () => {
+    // update sizes of the screen
+    sizes.width = window.innerWidth;
+    sizes.height = window.innerHeight;
+
+    // update camera aspect and projection
+    camera.aspect = sizes.width / sizes.height;
+    camera.updateProjectionMatrix();
+
+    // update size of renderer
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    // limit to pixel ratio of 2 to reduce the effort on (mobile) devices
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+})
+
+window.addEventListener('dblclick', () => {
+    if (!document.fullscreenElement) {
+        return canvas.requestFullscreen();
+    }
+    return document.exitFullscreen();
+})
+
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
 camera.position.z = 3;
 // move the camera, otherwise everything is centered in the middle of the scene and nothing will be visible
@@ -47,6 +63,8 @@ const renderer = new THREE.WebGLRenderer({
     canvas
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
+// limit to pixel ratio of 2 to reduce the effort on (mobile) devices
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 // animations
 const animate = () => {
