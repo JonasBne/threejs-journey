@@ -1,6 +1,16 @@
 import './style.css'
 import * as THREE from 'three';
 import { OrbitControls} from "three/examples/jsm/controls/OrbitControls";
+import * as debugUI from 'lil-gui';
+import gsap from 'gsap';
+
+const debugTweaks = {
+    color: '#AA00FF',
+    spin: () => gsap.to(mesh.rotation, { duration: 1, y: mesh.rotation.y + Math.PI })
+}
+
+// debug ui
+const gui = new debugUI.GUI();
 
 // canvas
 const canvas = document.getElementsByClassName('webgl')[0] as HTMLCanvasElement;
@@ -18,8 +28,20 @@ const canvas = document.getElementsByClassName('webgl')[0] as HTMLCanvasElement;
 const scene = new THREE.Scene();
 
 const geometry = new THREE.BoxGeometry(1, 1, 1, 3, 3, 3);
-const material = new THREE.MeshBasicMaterial({ color: '#ff0000', wireframe: true});
+const material = new THREE.MeshBasicMaterial({ color: debugTweaks.color, wireframe: true});
 const mesh = new THREE.Mesh(geometry, material);
+
+gui.add(mesh.position, 'x').min(-3).max(3).step(0.01).name('horizontal');
+gui.add(mesh.position, 'y').min(-3).max(3).step(0.01).name('vertical');
+gui.add(mesh.position, 'z').min(-3).max(3).step(0.01).name('depth');
+gui.add(mesh, 'visible');
+gui.add(material, 'wireframe');
+gui.addColor( debugTweaks, 'color' );
+gui.onChange((event) => {
+    material.color.set(event.value)
+})
+gui.add(debugTweaks, 'spin')
+
 scene.add(mesh);
 
 const sizes = {
