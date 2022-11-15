@@ -1,16 +1,37 @@
 import './style.css'
 import * as THREE from 'three';
 import { OrbitControls} from "three/examples/jsm/controls/OrbitControls";
-import * as debugUI from 'lil-gui';
-import gsap from 'gsap';
 
-const debugTweaks = {
-    color: '#AA00FF',
-    spin: () => gsap.to(mesh.rotation, { duration: 1, y: mesh.rotation.y + Math.PI })
+// textures
+const loadingManager = new THREE.LoadingManager()
+
+loadingManager.onStart = (url, loaded, total) =>
+{
+    console.log('loading started', url, loaded, total)
+}
+loadingManager.onLoad = () =>
+{
+    console.log('loading finished')
+}
+loadingManager.onProgress = () =>
+{
+    console.log('loading progressing')
+}
+loadingManager.onError = () =>
+{
+    console.log('loading error')
 }
 
-// debug ui
-const gui = new debugUI.GUI();
+const textureLoader = new THREE.TextureLoader(loadingManager);
+
+const colorTexture = textureLoader.load('src/textures/door/color.jpg')
+const alphaTexture = textureLoader.load('src/textures/door/alpha.jpg')
+const heightTexture = textureLoader.load('src/textures/door/height.jpg')
+const normalTexture = textureLoader.load('src/textures/door/normal.jpg')
+const ambientOcclusionTexture = textureLoader.load('src/textures/door/ambientOcclusion.jpg')
+const metalnessTexture = textureLoader.load('src/textures/door/metalness.jpg')
+const roughnessTexture = textureLoader.load('src/textures/door/roughness.jpg')
+
 
 // canvas
 const canvas = document.getElementsByClassName('webgl')[0] as HTMLCanvasElement;
@@ -28,20 +49,8 @@ const canvas = document.getElementsByClassName('webgl')[0] as HTMLCanvasElement;
 const scene = new THREE.Scene();
 
 const geometry = new THREE.BoxGeometry(1, 1, 1, 3, 3, 3);
-const material = new THREE.MeshBasicMaterial({ color: debugTweaks.color, wireframe: true});
+const material = new THREE.MeshBasicMaterial({ map: colorTexture });
 const mesh = new THREE.Mesh(geometry, material);
-
-gui.add(mesh.position, 'x').min(-3).max(3).step(0.01).name('horizontal');
-gui.add(mesh.position, 'y').min(-3).max(3).step(0.01).name('vertical');
-gui.add(mesh.position, 'z').min(-3).max(3).step(0.01).name('depth');
-gui.add(mesh, 'visible');
-gui.add(material, 'wireframe');
-gui.addColor( debugTweaks, 'color' );
-gui.onChange((event) => {
-    material.color.set(event.value)
-})
-gui.add(debugTweaks, 'spin')
-
 scene.add(mesh);
 
 const sizes = {
