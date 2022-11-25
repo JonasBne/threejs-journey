@@ -1,57 +1,39 @@
 import './style.css'
 import * as THREE from 'three';
 import { OrbitControls} from "three/examples/jsm/controls/OrbitControls";
-
-// textures
-const loadingManager = new THREE.LoadingManager()
-
-loadingManager.onStart = (url, loaded, total) =>
-{
-    console.log('loading started', url, loaded, total)
-}
-loadingManager.onLoad = () =>
-{
-    console.log('loading finished')
-}
-loadingManager.onProgress = () =>
-{
-    console.log('loading progressing')
-}
-loadingManager.onError = () =>
-{
-    console.log('loading error')
-}
-
-const textureLoader = new THREE.TextureLoader(loadingManager);
-
-const colorTexture = textureLoader.load('src/textures/door/color.jpg')
-const alphaTexture = textureLoader.load('src/textures/door/alpha.jpg')
-const heightTexture = textureLoader.load('src/textures/door/height.jpg')
-const normalTexture = textureLoader.load('src/textures/door/normal.jpg')
-const ambientOcclusionTexture = textureLoader.load('src/textures/door/ambientOcclusion.jpg')
-const metalnessTexture = textureLoader.load('src/textures/door/metalness.jpg')
-const roughnessTexture = textureLoader.load('src/textures/door/roughness.jpg')
-
+import {FontLoader} from "three/examples/jsm/loaders/FontLoader";
+import {TextGeometry} from "three/examples/jsm/geometries/TextGeometry";
 
 // canvas
 const canvas = document.getElementsByClassName('webgl')[0] as HTMLCanvasElement;
 
-/*
-4 prerequisites to render a scene in the browser:
-- a Mesh, consists out of:
-    - a geometry
-    - a material
-- a Camera
-- a Scene
-- a Renderer
-*/
-
 const scene = new THREE.Scene();
 
-const geometry = new THREE.BoxGeometry(1, 1, 1, 3, 3, 3);
-const material = new THREE.MeshBasicMaterial({ map: colorTexture });
-const mesh = new THREE.Mesh(geometry, material);
-scene.add(mesh);
+// fonts
+const fontLoader = new FontLoader();
+fontLoader.load('src/assets/fonts/helvetiker_regular.typeface.json', (font) => {
+    const textGeometry = new TextGeometry('Hello World', {
+        font,
+        size: 0.5,
+        height: 0.2,
+        curveSegments: 5,
+        bevelEnabled: true,
+        bevelThickness: 0.03,
+        bevelSize: 0.02,
+        bevelOffset: 0,
+        bevelSegments: 4,
+    });
+
+    textGeometry.center()
+
+    const material = new THREE.MeshNormalMaterial();
+
+    const text = new THREE.Mesh(
+        textGeometry,
+        material,
+    )
+    scene.add(text);
+})
 
 const sizes = {
     width: window.innerWidth,
@@ -81,7 +63,7 @@ window.addEventListener('dblclick', () => {
 })
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-camera.position.z = 3;
+camera.position.z = 5;
 // move the camera, otherwise everything is centered in the middle of the scene and nothing will be visible
 scene.add(camera);
 
@@ -96,6 +78,25 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(window.innerWidth, window.innerHeight);
 // limit to pixel ratio of 2 to reduce the effort on (mobile) devices
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+// create random objects
+const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 20, 45)
+
+for (let i=0; i<100; i++) {
+    let donut = new THREE.Mesh(donutGeometry, new THREE.MeshNormalMaterial());
+
+    const scale = Math.random();
+    donut.scale.set(scale, scale, scale);
+
+    donut.position.x = (Math.random() - 0.5) * 10
+    donut.position.y = (Math.random() - 0.5) * 10
+    donut.position.z = (Math.random() - 0.5) * 10
+
+    donut.rotation.x = Math.random();
+    donut.rotation.y = Math.random()
+
+    scene.add(donut)
+}
 
 // animations
 const animate = () => {
