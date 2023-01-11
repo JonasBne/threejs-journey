@@ -1,11 +1,10 @@
-# Threejs basic scene
+# Three.js Journey ⭐
 
-## Introduction
+## Description
 
-A repository I have created to keep track of my work for [Threejs Journey](https://threejs-journey.com/).
-This code relates chapter 1. Each commit represents a section of the chapter.
+I use this repository to keep track of my work and progress for [threejs-journey](https://threejs-journey.com/).
 
-This project is bootstrapped with Vite, vanilla JavaScript & TypeScript.
+This project is bootstrapped with my [threejs-vite-starter template](https://github.com/JonasBne/threejs-vite-starter-project).
 
 ## Available scripts
 
